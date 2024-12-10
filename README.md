@@ -36,6 +36,9 @@ Options:
 
           [default: agendrr.yaml]
 
+      --debug
+          Toggle debug output
+
   -h, --help
           Print help (see a summary with '-h')
 
@@ -65,6 +68,7 @@ strip-event-suffixes:
   - " - Fortnightly"
 
 # (Optional) A list of colours to be ignored, if events are coloured in your calendar.
+# These IDs can be obtained by running agendrr with the --debug flag.
 ignored-colours:
   - "8"
 

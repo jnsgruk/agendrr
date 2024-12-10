@@ -49,6 +49,10 @@ pub struct Config {
     /// A map of Event Name -> Note Name for events with odd names.
     #[serde(default)]
     pub mapped_filenames: HashMap<String, String>,
+
+    /// A boolean to toggle debug output.
+    #[serde(default)]
+    pub debug: bool,
 }
 
 impl Config {
@@ -63,6 +67,7 @@ impl Config {
         let mut cfg: Config = confy::load_path(args.config_file)?;
         // Set the runtime offset from the CLI arguments.
         cfg.day_offset = args.offset;
+        cfg.debug = args.debug;
 
         Ok(Self {
             credentials_path: PathBuf::from(args.credentials),
@@ -75,6 +80,7 @@ impl Config {
             ignored_colours: cfg.ignored_colours,
             ignored_regex: cfg.ignored_regex,
             mapped_filenames: cfg.mapped_filenames,
+            debug: cfg.debug,
         })
     }
 }

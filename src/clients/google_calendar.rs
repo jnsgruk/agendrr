@@ -46,7 +46,8 @@ impl GoogleCalendarClient {
         let token_storage_path = xdg::BaseDirectories::new()?
             .place_config_file("agendrr/token.json")
             .with_context(|| {
-                "failed to cache tokens file at path: $XDG_CONFIG_HOME/agendrr/token.json".to_string()
+                "failed to cache tokens file at path: $XDG_CONFIG_HOME/agendrr/token.json"
+                    .to_string()
             })?;
 
         let auth = yup_oauth2::InstalledFlowAuthenticator::builder(
@@ -85,7 +86,14 @@ impl GoogleCalendarClient {
             .map(|a| a.email.unwrap_or_default())
             .collect();
 
-        Event::build(&self.config, start, summary, description, color, attendees)
+        let agendrr_event =
+            Event::build(&self.config, start, summary, description, color, attendees);
+
+        if self.config.debug {
+            dbg!("constructed event: {:?}", &agendrr_event);
+        }
+
+        agendrr_event
     }
 }
 

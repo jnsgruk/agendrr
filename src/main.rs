@@ -27,6 +27,10 @@ struct Cli {
     /// Path to the configuration file.
     #[arg(short, long, default_value = "agendrr.yaml")]
     config_file: String,
+
+    /// Toggle debug output.
+    #[arg(long, default_value = "false")]
+    debug: bool,
 }
 
 #[tokio::main]
