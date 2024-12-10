@@ -1,0 +1,20 @@
+calendar-id: joe.bloggs@example.com
+user-email: joe.bloggs@example.com
+user-preferred-name: Joey
+
+regular-note-glob: "/home/joe/notes/meetings/regulars/*.md"
+
+strip-event-suffixes:
+  - " - Weekly"
+  - " - Monthly"
+  - " - Fortnightly"
+
+ignored-colours:
+  - "8"
+
+ignored-regex:
+  - "^Some Meeting Name$"
+  - "^[C|D]EFG"
+
+mapped-filenames:
+  "Some Calendar Event with a Long/Annoying Name": "Some Meeting"

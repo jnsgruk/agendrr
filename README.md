@@ -43,6 +43,41 @@ Options:
           Print version
 ```
 
+## Configuration
+
+There is an example configuration file at [./agendrr.example.yaml], the schema is as follows:
+
+```yaml
+# (Required) The ID of the calendar in Google Calendar.
+calendar-id: joe.bloggs@example.com
+# (Required) The email address associated with your calendar.
+user-email: joe.bloggs@example.com
+# (Required} Preferred name for agenda summary generation.
+user-preferred-name: Joey
+
+# (Optional) A glob which selects a list of notes representing a set of "Regular Meeting" notes.
+regular-note-glob: "/home/joe/notes/meetings/regulars/*.md"
+
+# (Optional) A list of event name suffixes to be absent from the agenda summary.
+strip-event-suffixes:
+  - " - Weekly"
+  - " - Monthly"
+  - " - Fortnightly"
+
+# (Optional) A list of colours to be ignored, if events are coloured in your calendar.
+ignored-colours:
+  - "8"
+
+# (Optional) A list of regular expressions that match the titles of events you'd like to ignore.
+ignored-regex:
+  - "^Some Meeting Name$"
+  - "^[C|D]EFG"
+
+# (Optional) Map event names with a particular name to a particular note on your filesystem.
+mapped-filenames:
+  "Some Calendar Event with a Long/Annoying Name": "Some Meeting"
+```
+
 ## Credentials
 
 The script will look for a `credentials.json` file in the same directory as `agendrr`.
