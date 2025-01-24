@@ -3,12 +3,14 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
   outputs =
     {
       self,
       nixpkgs,
+      rust-overlay,
     }:
     let
       supportedSystems = [
@@ -16,7 +18,13 @@
         "aarch64-linux"
       ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
-      pkgsForSystem = system: (import nixpkgs { inherit system; });
+
+      pkgsForSystem =
+        system:
+        (import nixpkgs {
+          inherit system;
+          overlays = [ (import rust-overlay) ];
+        });
     in
     {
       packages = forAllSystems (
@@ -55,17 +63,20 @@
         system:
         let
           pkgs = pkgsForSystem system;
+          rust = pkgs.rust-bin.beta.latest.default.override {
+            extensions = [ "rust-src" ];
+          };
         in
         {
           default = pkgs.mkShell {
             name = "agendrr";
+
             NIX_CONFIG = "experimental-features = nix-command flakes";
+            RUST_SRC_PATH = "${rust}/lib/rustlib/src/rust/library";
+
             inputsFrom = [ self.packages.${system}.agendrr ];
-            buildInputs = with pkgs; [
-              rustc
-              cargo
-              clippy
-              rust-analyzer
+            buildInputs = [
+              rust
             ];
           };
         }
