@@ -1,0 +1,47 @@
+name: agendrr
+adopt-info: agendrr
+summary: Generate a markdown summary of events from Google Calendar
+description: |
+  A small utility for automating the creation of my "Daily Notes" in Obsidian.
+  I wrote more about this setup at https://jnsgr.uk/uses.
+
+  This utility reads my calendar, and generates a short snippet of Markdown for the
+  current day, linking to the correct notes in my Obsidian vault.
+
+  I previously used some shonky Go code for this task, and before that some even
+  shonkier Python. This implementation was the second Rust application I wrote,
+  and mostly used as a learning exercise.
+
+  Unless you want to set up your calendar, and note taking applications to be just
+  like me, it's unlikely this will be very useful to you!
+
+license: Apache-2.0
+contact: https://github.com/jnsgruk/agendrr/issues
+issues: https://github.com/jnsgruk/agendrr/issues
+source-code: https://github.com/jnsgruk/agendrr
+
+base: core24
+confinement: strict
+grade: stable
+compression: lzo
+
+platforms:
+  amd64:
+  arm64:
+
+parts:
+  agendrr:
+    plugin: rust
+    source: .
+    override-prime: |
+      craftctl default
+      bin_version="$($CRAFT_PRIME/bin/agendrr --version | cut -d" " -f2)"
+      craftctl set version="$bin_version"
+
+apps:
+  agendrr:
+    command: bin/agendrr
+    plugs:
+      - home
+      - network
+      - network-bind

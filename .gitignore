@@ -3,3 +3,5 @@ result*
 agendrr.yaml
 credentials.json
 token.json
+*.snap
+snapcraft*.txt

@@ -6,9 +6,13 @@ on:
   pull_request:
     branches: ["main"]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
-    name: Build agendrr
+  test:
+    name: Build/Test agendrr
     runs-on: ubuntu-latest
     steps:
       - name: Check out code into the Go module directory
@@ -19,9 +23,6 @@ jobs:
       - name: Install nix
         uses: DeterminateSystems/nix-installer-action@main
 
-      - name: Setup magic-nix-cache
-        uses: DeterminateSystems/magic-nix-cache-action@main
-
       - name: Build agendrr
         run: |
           nix build .#agendrr
@@ -29,3 +30,46 @@ jobs:
       - name: Run tests
         run: |
           nix develop --command cargo test -- --show-output
+
+  snap:
+    name: Build snap
+    needs:
+      - test
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-24.04
+          - os: ubuntu-24.04-arm
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup LXD
+        uses: canonical/setup-lxd@v0.1.2
+
+      - name: Setup Snapcraft
+        run: sudo snap install --classic snapcraft
+
+      - name: Build snap
+        run: snapcraft --verbose
+
+      - name: Check versions match
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          version="$(grep -m1 -Po "version = \"\K[^\"]+" Cargo.toml)"
+          if [[ "v${version}" != "${GITHUB_REF#refs/*/}" ]]; then
+            echo "Cargo package version and tag do not match; refusing to continue."
+            exit 1
+          fi
+
+      - name: Release snap
+        # TODO: Enable once snap name is registered
+        if: false
+        # if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.STORE_SECRET }}
+        run: |
+          snapcraft upload agendrr_*.snap --release latest/candidate
