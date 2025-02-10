@@ -1,5 +1,7 @@
 # agendrr
 
+<a href="https://snapcraft.io/agendrr"><img alt="agendrr" src="https://snapcraft.io/agendrr/badge.svg"/></a>
+
 A small utility for automating the creation of my "Daily Notes" in Obsidian. I wrote more about
 this setup at https://jnsgr.uk/uses.
 
@@ -12,6 +14,20 @@ exercise.
 
 Unless you want to set up your calendar, and note taking applications to be _just like me_, it's
 unlikely this will be very useful to you!
+
+## Installation
+
+You can install `agendrr` as a Snap:
+
+```bash
+sudo snap install agendrr
+```
+
+Or you can run using Nix:
+
+```bash
+nix run github:jnsgruk/agendrr
+```
 
 ## Usage
 
@@ -89,7 +105,7 @@ The script will look for a `credentials.json` file in the same directory as `age
 A credential can be downloaded once a [desktop OAuth app] has been created for the [Google Calendar
 API].
 
-## Running `agendrr`.
+## Building `agendrr`.
 
 ```bash
 # With nix
