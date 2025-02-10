@@ -1,10 +1,8 @@
-name: Build/Test agendrr
+name: Release
 
 on:
   push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+    tags: ["v*"]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -32,7 +30,7 @@ jobs:
           nix develop --command cargo test -- --show-output
 
   snap:
-    name: Build snap
+    name: Release snap
     strategy:
       matrix:
         include:
@@ -45,6 +43,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check versions match
+        run: |
+          version="$(grep -m1 -Po "version = \"\K[^\"]+" Cargo.toml)"
+          if [[ "v${version}" != "${GITHUB_REF#refs/*/}" ]]; then
+            echo "Cargo package version and tag do not match; refusing to continue."
+            exit 1
+          fi
+
       - name: Setup LXD
         uses: canonical/setup-lxd@v0.1.2
 
@@ -53,3 +59,9 @@ jobs:
 
       - name: Build snap
         run: snapcraft --verbose
+
+      - name: Release snap
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.STORE_SECRET }}
+        run: |
+          snapcraft upload agendrr_*.snap --release latest/candidate
