@@ -17,5 +17,5 @@ regex = "1.11.1"
 serde = { version = "1", features = ["derive"] }
 serde-email = "3.1.0"
 serde_regex = "1.1.0"
-tokio = { version = "1.0", features = ["full"] }
+tokio = { version = "1.43", features = ["full"] }
 xdg = "2.5.2"
