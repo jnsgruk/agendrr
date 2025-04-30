@@ -8,7 +8,7 @@ mod regular;
 use crate::{config::Config, event::Event};
 use anyhow::Result;
 pub use calendly::CalendlyEventHandler;
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Local};
 use default::DefaultEventHandler;
 use interview::InterviewEventHandler;
 use mapped::MappedEventHandler;
@@ -34,7 +34,7 @@ pub fn default_handlers(config: &Config) -> Result<Vec<Box<dyn EventHandler>>> {
 }
 
 /// linked_agenda_entry returns a markdown-formatted string for a linked agenda entry.
-fn linked_agenda_entry(date: &DateTime<Utc>, name: &str, alias: &str) -> String {
+fn linked_agenda_entry(date: &DateTime<Local>, name: &str, alias: &str) -> String {
     format!(
         "- **{}**: [[{}#{}|{}]]",
         date.format("%H%M"),

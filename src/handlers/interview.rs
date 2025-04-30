@@ -2,7 +2,7 @@ use super::*;
 
 use crate::event::Event;
 use anyhow::Result;
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Local};
 use regex::Regex;
 use std::sync::LazyLock;
 
@@ -73,7 +73,7 @@ impl EventHandler for InterviewEventHandler {
 }
 
 /// interview_agenda_entry returns the formatted string for the interview event.
-fn interview_agenda_entry(date: &DateTime<Utc>, filename: &str, candidate_name: &str) -> String {
+fn interview_agenda_entry(date: &DateTime<Local>, filename: &str, candidate_name: &str) -> String {
     format!(
         "- **{}**: [[{}|{} Interview Notes]]",
         date.format("%H%M"),
@@ -88,7 +88,7 @@ mod tests {
     use chrono::prelude::*;
 
     fn create_event(name: &str, description: &str, attendees: Vec<&str>) -> Event {
-        let start_time = Utc.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap();
+        let start_time = Local.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap();
 
         Event {
             name: name.to_string(),

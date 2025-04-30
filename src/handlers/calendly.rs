@@ -59,7 +59,7 @@ mod tests {
     fn test_handles_calendly_event() {
         let handler = CalendlyEventHandler::build("Jon").unwrap();
 
-        let start_time = Utc.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap();
+        let start_time = Local.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap();
 
         let event = Event {
             name: "John Smith and Jon Seager".to_string(),
@@ -77,7 +77,7 @@ mod tests {
         let handler = CalendlyEventHandler::build("Jon").unwrap();
         let event = Event {
             name: "Regular Meeting".to_string(),
-            start_time: Utc::now(),
+            start_time: Local::now(),
             ..Default::default()
         };
         assert!(handler.handle(&event).is_none());
@@ -87,7 +87,7 @@ mod tests {
     fn test_handles_single_name() {
         let handler = CalendlyEventHandler::build("Jon").unwrap();
 
-        let start_time = Utc.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap();
+        let start_time = Local.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap();
 
         let event = Event {
             name: "Mohammad and Jon Seager".to_string(),

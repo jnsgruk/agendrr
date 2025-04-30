@@ -74,7 +74,11 @@ impl GoogleCalendarClient {
 
     /// build_agenda_event creates an Event from a Google Calendar event.
     fn build_agenda_event(&self, event: GCalEvent) -> Event {
-        let start = event.start.and_then(|s| s.date_time).unwrap_or_default();
+        let start = event
+            .start
+            .and_then(|s| s.date_time)
+            .unwrap_or_default()
+            .into();
         let summary = event.summary.unwrap_or_default();
         let description = event.description.unwrap_or_default();
         let color = event.color_id.unwrap_or_else(|| "none".to_string());

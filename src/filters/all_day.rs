@@ -29,7 +29,7 @@ mod tests {
     fn test_exclude_all_day_event() {
         let filter = AllDayFilter::build().unwrap();
         let event = Event {
-            start_time: DateTime::<Utc>::from_timestamp(0, 0).unwrap(),
+            start_time: DateTime::<Utc>::from_timestamp(0, 0).unwrap().into(),
             ..Default::default()
         };
         assert!(filter.exclude(&event));
@@ -39,7 +39,9 @@ mod tests {
     fn test_include_timed_event() {
         let filter = AllDayFilter::build().unwrap();
         let event = Event {
-            start_time: DateTime::<Utc>::from_timestamp(1234567890, 0).unwrap(),
+            start_time: DateTime::<Utc>::from_timestamp(1234567890, 0)
+                .unwrap()
+                .into(),
             ..Default::default()
         };
         assert!(!filter.exclude(&event));

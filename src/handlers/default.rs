@@ -32,7 +32,7 @@ mod tests {
     fn test_default_handler() {
         let handler = DefaultEventHandler::build().unwrap();
 
-        let start_time = Utc.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap();
+        let start_time = Local.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap();
 
         let event = Event {
             name: "This is some rando event".to_string(),

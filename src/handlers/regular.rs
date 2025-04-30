@@ -49,7 +49,7 @@ mod tests {
 
         let event = Event {
             name: "Some Event".to_string(),
-            start_time: Utc.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap(),
+            start_time: Local.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap(),
             ..Default::default()
         };
 
@@ -66,7 +66,7 @@ mod tests {
 
         let event = Event {
             name: "Jon / Joe - Weekly".to_string(),
-            start_time: Utc.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap(),
+            start_time: Local.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap(),
             ..Default::default()
         };
 

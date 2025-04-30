@@ -1,11 +1,11 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Local};
 
 use crate::config::Config;
 
 #[derive(Debug, Clone, Default)]
 pub struct Event {
     /// Start time of the event. For all day events, this is set to the Unix epoch.
-    pub start_time: DateTime<Utc>,
+    pub start_time: DateTime<Local>,
     /// Name of the event.
     pub name: String,
     /// Description of the event.
@@ -20,7 +20,7 @@ impl Event {
     /// Build a new event in the context of the current configuration.
     pub fn build(
         config: &Config,
-        start: DateTime<Utc>,
+        start: DateTime<chrono::Local>,
         name: String,
         description: String,
         color: String,

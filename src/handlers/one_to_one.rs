@@ -91,7 +91,7 @@ mod tests {
 
         let event = Event {
             attendees: vec!["jane.doe@example.com".to_string()],
-            start_time: Utc.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap(),
+            start_time: Local.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap(),
             ..Default::default()
         };
 
@@ -112,7 +112,7 @@ mod tests {
                 "jane.doe@example.com".to_string(),
                 "joe.bloggs@example.com".to_string(),
             ],
-            start_time: Utc.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap(),
+            start_time: Local.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap(),
             ..Default::default()
         };
 
