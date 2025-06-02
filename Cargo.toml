@@ -18,4 +18,4 @@ serde = { version = "1", features = ["derive"] }
 serde-email = "3.2.0"
 serde_regex = "1.1.0"
 tokio = { version = "1.45", features = ["full"] }
-xdg = "2.5.2"
+xdg = "3.0.0"
