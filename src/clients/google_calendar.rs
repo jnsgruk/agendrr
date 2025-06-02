@@ -43,7 +43,7 @@ impl GoogleCalendarClient {
                 )
             })?;
 
-        let token_storage_path = xdg::BaseDirectories::new()?
+        let token_storage_path = xdg::BaseDirectories::new()
             .place_config_file("agendrr/token.json")
             .with_context(|| {
                 "failed to cache tokens file at path: $XDG_CONFIG_HOME/agendrr/token.json"
