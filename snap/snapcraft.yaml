@@ -45,3 +45,10 @@ apps:
       - home
       - network
       - network-bind
+      - dot-config-agendrr
+
+plugs:
+  dot-config-agendrr:
+    interface: personal-files
+    write:
+      - $HOME/.config/agendrr
