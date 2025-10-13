@@ -75,8 +75,10 @@
             RUST_SRC_PATH = "${rust}/lib/rustlib/src/rust/library";
 
             inputsFrom = [ self.packages.${system}.agendrr ];
-            buildInputs = [
+            buildInputs = with pkgs; [
               rust
+              nil
+              nixfmt-rfc-style
             ];
           };
         }
