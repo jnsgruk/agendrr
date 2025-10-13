@@ -10,7 +10,7 @@ use clients::{CalendarClient, GoogleCalendarClient};
 use config::Config;
 use event::Event;
 use filters::default_filters;
-use handlers::{default_handlers, EventHandler};
+use handlers::{EventHandler, default_handlers};
 
 /// A command-line utility to generate a markdown summary of events from Google Calendar.
 #[derive(Parser)]
