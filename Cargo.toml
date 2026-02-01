@@ -6,8 +6,8 @@ edition = "2024"
 [dependencies]
 Inflector = "0.11.4"
 anyhow = "1.0.100"
-chrono = "0.4.42"
-clap = { version = "4.5.53", features = ["derive"] }
+chrono = "0.4.43"
+clap = { version = "4.5.56", features = ["derive"] }
 confy = { version = "2.0.0", features = [
     "yaml_conf",
 ], default-features = false }
@@ -17,5 +17,5 @@ regex = "1.12.2"
 serde = { version = "1", features = ["derive"] }
 serde-email = "3.2.0"
 serde_regex = "1.1.0"
-tokio = { version = "1.48", features = ["full"] }
+tokio = { version = "1.49", features = ["full"] }
 xdg = "3.0.0"
