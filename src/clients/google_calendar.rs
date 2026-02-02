@@ -61,14 +61,14 @@ impl GoogleCalendarClient {
             secret,
             yup_oauth2::InstalledFlowReturnMethod::HTTPRedirect,
             yup_oauth2::client::CustomHyperClientBuilder::from(
-                hyper_util::client::legacy::Client::builder(executor).build(connector.clone()),
+                hyper_util::client::legacy::Client::builder(executor.clone()).build(connector.clone()),
             ),
         )
         .persist_tokens_to_disk(token_storage_path)
         .build()
         .await?;
 
-        let client = hyper_util::client::legacy::Client::builder(hyper_util::rt::TokioExecutor::new())
+        let client = hyper_util::client::legacy::Client::builder(executor)
             .build(connector);
 
         let calendar_hub = CalendarHub::new(client, auth);
