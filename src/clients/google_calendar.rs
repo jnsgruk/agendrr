@@ -50,23 +50,26 @@ impl GoogleCalendarClient {
                     .to_string()
             })?;
 
-        let auth = yup_oauth2::InstalledFlowAuthenticator::builder(
+        let connector = hyper_rustls::HttpsConnectorBuilder::new()
+            .with_native_roots()?
+            .https_or_http()
+            .enable_all_versions()
+            .build();
+
+        let executor = hyper_util::rt::TokioExecutor::new();
+        let auth = yup_oauth2::InstalledFlowAuthenticator::with_client(
             secret,
             yup_oauth2::InstalledFlowReturnMethod::HTTPRedirect,
+            yup_oauth2::client::CustomHyperClientBuilder::from(
+                hyper_util::client::legacy::Client::builder(executor.clone()).build(connector.clone()),
+            ),
         )
         .persist_tokens_to_disk(token_storage_path)
         .build()
         .await?;
 
-        let client =
-            hyper_util::client::legacy::Client::builder(hyper_util::rt::TokioExecutor::new())
-                .build(
-                    hyper_rustls::HttpsConnectorBuilder::new()
-                        .with_native_roots()?
-                        .https_or_http()
-                        .enable_http1()
-                        .build(),
-                );
+        let client = hyper_util::client::legacy::Client::builder(executor)
+            .build(connector);
 
         let calendar_hub = CalendarHub::new(client, auth);
         Ok(calendar_hub)
