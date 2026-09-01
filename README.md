@@ -23,12 +23,6 @@ You can install `agendrr` as a Snap:
 sudo snap install agendrr
 ```
 
-Or you can run using Nix:
-
-```bash
-nix run github:jnsgruk/agendrr
-```
-
 ## Usage
 
 ```
@@ -108,10 +102,8 @@ API].
 ## Building `agendrr`.
 
 ```bash
-# With nix
-nix run .#agendrr
-# With cargo
-cargo run .
+mise install
+cargo run
 ```
 
 This will create a `~/.config/agendrr/token.json` file, which will be used on subsequent runs to
