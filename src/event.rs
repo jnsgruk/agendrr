@@ -55,7 +55,7 @@ mod tests {
     #[test]
     fn test_event_build_remove_suffixes() {
         let config = Config {
-            user_email: Email::from_str("user@example.com").unwrap(),
+            user_email: Email::new("user@example.com").unwrap(),
             strip_event_suffixes: vec![" - Weekly".to_string(), " - Monthly".to_string()],
             ..Default::default()
         };
@@ -76,7 +76,7 @@ mod tests {
     #[test]
     fn test_event_build_remove_user_from_attendees() {
         let config = Config {
-            user_email: Email::from_str("user@example.com").unwrap(),
+            user_email: Email::new("user@example.com").unwrap(),
             strip_event_suffixes: vec![" - Weekly".to_string(), " - Monthly".to_string()],
             ..Default::default()
         };
