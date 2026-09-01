@@ -1,4 +1,4 @@
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_email::Email;
@@ -82,5 +82,54 @@ impl Config {
             mapped_filenames: cfg.mapped_filenames,
             debug: cfg.debug,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+
+    fn config_path(name: &str) -> PathBuf {
+        std::env::temp_dir().join(format!("agendrr-{name}-{}.yaml", std::process::id()))
+    }
+
+    fn args(config_file: &Path) -> Cli {
+        Cli {
+            offset: 0,
+            credentials: "credentials.json".to_string(),
+            config_file: config_file.display().to_string(),
+            debug: false,
+        }
+    }
+
+    #[test]
+    fn loads_valid_user_email() {
+        let path = config_path("valid-email");
+        fs::write(
+            &path,
+            "calendar-id: calendar\nuser-email: user@example.com\nuser-preferred-name: User\n",
+        )
+        .unwrap();
+
+        let config = Config::build(args(&path)).unwrap();
+        fs::remove_file(path).unwrap();
+
+        assert_eq!(config.user_email, Email::new("user@example.com").unwrap());
+    }
+
+    #[test]
+    fn rejects_invalid_user_email() {
+        let path = config_path("invalid-email");
+        fs::write(
+            &path,
+            "calendar-id: calendar\nuser-email: not-an-email\nuser-preferred-name: User\n",
+        )
+        .unwrap();
+
+        let result = Config::build(args(&path));
+        fs::remove_file(path).unwrap();
+
+        assert!(result.is_err());
     }
 }

@@ -1,5 +1,5 @@
 use super::*;
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 use inflector::Inflector;
 use serde_email::Email;
 
@@ -32,7 +32,7 @@ impl OneToOneEventHandler {
         };
 
         // Parse the email and get the String representation
-        let email = Email::from_str(email)?.to_string();
+        let email = Email::new(email)?.to_string();
 
         let Some((local_part, domain)) = email.split_once("@") else {
             bail!("failed to extract local and domain parts from email");
@@ -81,8 +81,7 @@ mod tests {
     use chrono::prelude::*;
 
     fn one_to_one_handler() -> Box<OneToOneEventHandler> {
-        OneToOneEventHandler::build("John", &Email::from_str("john.doe@example.com").unwrap())
-            .unwrap()
+        OneToOneEventHandler::build("John", &Email::new("john.doe@example.com").unwrap()).unwrap()
     }
 
     #[test]
