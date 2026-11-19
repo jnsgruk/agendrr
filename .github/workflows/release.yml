@@ -27,6 +27,76 @@ jobs:
       - name: Run tests
         run: cargo test --locked -- --show-output
 
+  build:
+    name: Build (${{ matrix.arch }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            target: x86_64-unknown-linux-musl
+          - arch: arm64
+            target: aarch64-unknown-linux-musl
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install cross
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cross
+
+      - name: Build
+        run: cross build --locked --release --target ${{ matrix.target }}
+
+      - name: Package
+        run: |
+          tar -czf agendrr-${{ github.ref_name }}-linux-${{ matrix.arch }}.tar.gz \
+            -C target/${{ matrix.target }}/release agendrr
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: agendrr-linux-${{ matrix.arch }}
+          path: agendrr-*.tar.gz
+
+  release:
+    name: Create GitHub Release
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Check versions match
+        run: |
+          version="$(grep -m1 -Po "version = \"\K[^\"]+" Cargo.toml)"
+          if [[ "v${version}" != "${GITHUB_REF#refs/*/}" ]]; then
+            echo "Cargo package version and tag do not match; refusing to continue."
+            exit 1
+          fi
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v8
+        with:
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          files: agendrr-*.tar.gz
+
   snap:
     name: Release snap
     strategy:
