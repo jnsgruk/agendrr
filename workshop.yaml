@@ -1,0 +1,15 @@
+name: agendrr
+base: ubuntu@24.04
+sdks:
+  - name: rust
+    channel: latest/stable
+  - name: project-musl
+
+actions:
+  build: cargo build --locked "$@"
+  test: cargo test --locked "$@"
+  lint: cargo clippy --locked "$@"
+  release: |
+    target="$(uname -m)-unknown-linux-musl"
+    rustup target add "$target"
+    cargo build --locked --release --target "$target"
