@@ -90,6 +90,12 @@ ignored-regex:
 # (Optional) Map event names with a particular name to a particular note on your filesystem.
 mapped-filenames:
   "Some Calendar Event with a Long/Annoying Name": "Some Meeting"
+
+# (Optional) Link to notes with slugified filenames, such as "jane-doe.md" rather than
+# "Jane Doe.md". The original name is kept as the link alias, so the example above
+# renders as "[[some-meeting#2024-12-05|Some Meeting]]". Regular meetings also match
+# notes named after the slugified event name. Defaults to false.
+slug-note-names: true
 ```
 
 ## Credentials

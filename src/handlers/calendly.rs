@@ -13,13 +13,15 @@ static CALENDLY_EVENT_REGEX: LazyLock<Regex> =
 /// CalendlyEventHandler is used for handling Calendly events.
 pub struct CalendlyEventHandler {
     user_name: String,
+    slug: bool,
 }
 
 impl CalendlyEventHandler {
     /// build creates a new CalendlyEventHandler with the given user name.
-    pub fn build(user_name: &str) -> Result<Box<Self>> {
+    pub fn build(user_name: &str, slug: bool) -> Result<Box<Self>> {
         Ok(Box::new(Self {
             user_name: user_name.to_string(),
+            slug,
         }))
     }
 
@@ -44,7 +46,8 @@ impl EventHandler for CalendlyEventHandler {
             // Construct the alias from the user name and the first name
             let alias = format!("{}/{}", self.user_name, first_name);
 
-            return Some(linked_agenda_entry(&event.start_time, full_name, &alias));
+            let note = note_name(full_name, self.slug);
+            return Some(linked_agenda_entry(&event.start_time, &note, &alias));
         }
         None
     }
@@ -57,7 +60,7 @@ mod tests {
 
     #[test]
     fn test_handles_calendly_event() {
-        let handler = CalendlyEventHandler::build("Jon").unwrap();
+        let handler = CalendlyEventHandler::build("Jon", false).unwrap();
 
         let start_time = Local.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap();
 
@@ -74,7 +77,7 @@ mod tests {
 
     #[test]
     fn test_ignores_non_calendly_event() {
-        let handler = CalendlyEventHandler::build("Jon").unwrap();
+        let handler = CalendlyEventHandler::build("Jon", false).unwrap();
         let event = Event {
             name: "Regular Meeting".to_string(),
             start_time: Local::now(),
@@ -85,7 +88,7 @@ mod tests {
 
     #[test]
     fn test_handles_single_name() {
-        let handler = CalendlyEventHandler::build("Jon").unwrap();
+        let handler = CalendlyEventHandler::build("Jon", false).unwrap();
 
         let start_time = Local.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap();
 
@@ -97,5 +100,19 @@ mod tests {
 
         let result = handler.handle(&event).unwrap();
         assert_eq!(result, "- **0900**: [[Mohammad#2024-12-05|Jon/Mohammad]]");
+    }
+
+    #[test]
+    fn test_handles_calendly_event_slug() {
+        let handler = CalendlyEventHandler::build("Jon", true).unwrap();
+
+        let event = Event {
+            name: "John Smith and Jon Seager".to_string(),
+            start_time: Local.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap(),
+            ..Default::default()
+        };
+
+        let result = handler.handle(&event).unwrap();
+        assert_eq!(result, "- **0900**: [[john-smith#2024-12-05|Jon/John]]");
     }
 }

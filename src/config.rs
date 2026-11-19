@@ -50,6 +50,9 @@ pub struct Config {
     #[serde(default)]
     pub mapped_filenames: HashMap<String, String>,
 
+    #[serde(default)]
+    pub slug_note_names: bool,
+
     /// A boolean to toggle debug output.
     #[serde(default)]
     pub debug: bool,
@@ -80,6 +83,7 @@ impl Config {
             ignored_colours: cfg.ignored_colours,
             ignored_regex: cfg.ignored_regex,
             mapped_filenames: cfg.mapped_filenames,
+            slug_note_names: cfg.slug_note_names,
             debug: cfg.debug,
         })
     }
