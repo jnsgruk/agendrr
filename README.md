@@ -115,5 +115,15 @@ cargo run
 This will create a `~/.config/agendrr/token.json` file, which will be used on subsequent runs to
 get access to the API without reauthorising.
 
+Alternatively, build and test in a [Workshop](https://github.com/canonical/workshop), as CI does:
+
+```bash
+workshop launch
+workshop run agendrr build
+workshop run agendrr test
+# Build a static (musl) release binary for the host architecture
+workshop run agendrr release
+```
+
 [desktop OAuth app]: https://developers.google.com/workspace/guides/create-credentials#desktop-app
 [Google Calendar API]: https://developers.google.com/calendar/api/guides/overview

@@ -18,14 +18,83 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install toolchain
-        uses: jdx/mise-action@v4
+      - name: Launch workshop
+        uses: canonical/launch-workshop@b9e184e38f49808ced78e25de19483fe02484c46 # v1.0.1
+        with:
+          cache: rust:cargo-registry
 
       - name: Build agendrr
-        run: cargo build --locked
+        run: workshop run agendrr build
 
       - name: Run tests
-        run: cargo test --locked -- --show-output
+        run: workshop run agendrr test -- --show-output
+
+  build:
+    name: Build (${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            os: ubuntu-24.04
+            target: x86_64-unknown-linux-musl
+          - arch: arm64
+            os: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-musl
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Launch workshop
+        uses: canonical/launch-workshop@b9e184e38f49808ced78e25de19483fe02484c46 # v1.0.1
+        with:
+          cache: rust:cargo-registry
+
+      - name: Build
+        run: workshop run agendrr release
+
+      - name: Package
+        run: |
+          tar -czf agendrr-${{ github.ref_name }}-linux-${{ matrix.arch }}.tar.gz \
+            -C target/${{ matrix.target }}/release agendrr
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: agendrr-linux-${{ matrix.arch }}
+          path: agendrr-*.tar.gz
+
+  release:
+    name: Create GitHub Release
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Check versions match
+        run: |
+          version="$(grep -m1 -Po "version = \"\K[^\"]+" Cargo.toml)"
+          if [[ "v${version}" != "${GITHUB_REF#refs/*/}" ]]; then
+            echo "Cargo package version and tag do not match; refusing to continue."
+            exit 1
+          fi
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v8
+        with:
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" agendrr-*.tar.gz \
+            --repo "${GITHUB_REPOSITORY}" --title "${GITHUB_REF_NAME}" --verify-tag
 
   snap:
     name: Release snap

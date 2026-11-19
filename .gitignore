@@ -4,3 +4,4 @@ credentials.json
 token.json
 *.snap
 snapcraft*.txt
+.workshop.lock

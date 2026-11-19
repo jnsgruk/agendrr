@@ -20,14 +20,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install toolchain
-        uses: jdx/mise-action@v4
+      - name: Launch workshop
+        uses: canonical/launch-workshop@b9e184e38f49808ced78e25de19483fe02484c46 # v1.0.1
+        with:
+          cache: rust:cargo-registry
 
       - name: Build agendrr
-        run: cargo build --locked
+        run: workshop run agendrr build
 
       - name: Run tests
-        run: cargo test --locked -- --show-output
+        run: workshop run agendrr test -- --show-output
 
   snap:
     name: Build snap
