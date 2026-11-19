@@ -105,25 +105,27 @@ The script will look for a `credentials.json` file in the same directory as `age
 A credential can be downloaded once a [desktop OAuth app] has been created for the [Google Calendar
 API].
 
-## Building `agendrr`.
+On first authorization, `agendrr` caches the OAuth token in
+`~/.config/agendrr/token.json` by default and reuses it on subsequent runs.
 
-```bash
-mise install
-cargo run
-```
+## Development
 
-This will create a `~/.config/agendrr/token.json` file, which will be used on subsequent runs to
-get access to the API without reauthorising.
-
-Alternatively, build and test in a [Workshop](https://github.com/canonical/workshop), as CI does:
+Install [Canonical Workshop] and run these commands from the repository root to launch the
+development environment and run the same build and test actions as CI.
 
 ```bash
 workshop launch
 workshop run agendrr build
 workshop run agendrr test
-# Build a static (musl) release binary for the host architecture
+```
+
+Run Clippy and build a static musl release binary for the workshop's architecture with these actions.
+
+```bash
+workshop run agendrr lint
 workshop run agendrr release
 ```
 
+[Canonical Workshop]: https://github.com/canonical/workshop
 [desktop OAuth app]: https://developers.google.com/workspace/guides/create-credentials#desktop-app
 [Google Calendar API]: https://developers.google.com/calendar/api/guides/overview
