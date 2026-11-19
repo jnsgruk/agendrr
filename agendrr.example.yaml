@@ -18,3 +18,5 @@ ignored-regex:
 
 mapped-filenames:
   "Some Calendar Event with a Long/Annoying Name": "Some Meeting"
+
+slug-note-names: false

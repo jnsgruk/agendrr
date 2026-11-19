@@ -7,14 +7,16 @@ use serde_email::Email;
 pub struct OneToOneEventHandler {
     user_email: Email,
     user_first_name: String,
+    slug: bool,
 }
 
 impl OneToOneEventHandler {
     /// build creates a new OneToOneEventHandler with the given user name and email.
-    pub fn build(user_first_name: &str, user_email: &Email) -> Result<Box<Self>> {
+    pub fn build(user_first_name: &str, user_email: &Email, slug: bool) -> Result<Box<Self>> {
         Ok(Box::new(Self {
             user_email: user_email.clone(),
             user_first_name: user_first_name.to_string(),
+            slug,
         }))
     }
 
@@ -68,7 +70,8 @@ impl EventHandler for OneToOneEventHandler {
         match result {
             Ok((first_name, full_name)) => {
                 let alias = format!("{}/{}", self.user_first_name, first_name);
-                Some(linked_agenda_entry(&event.start_time, &full_name, &alias))
+                let note = note_name(&full_name, self.slug);
+                Some(linked_agenda_entry(&event.start_time, &note, &alias))
             }
             Err(_) => None,
         }
@@ -81,7 +84,26 @@ mod tests {
     use chrono::prelude::*;
 
     fn one_to_one_handler() -> Box<OneToOneEventHandler> {
-        OneToOneEventHandler::build("John", &Email::new("john.doe@example.com").unwrap()).unwrap()
+        OneToOneEventHandler::build("John", &Email::new("john.doe@example.com").unwrap(), false)
+            .unwrap()
+    }
+
+    #[test]
+    fn test_valid_one_to_one_slug() {
+        let handler =
+            OneToOneEventHandler::build("John", &Email::new("john.doe@example.com").unwrap(), true)
+                .unwrap();
+
+        let event = Event {
+            attendees: vec!["jane.doe@example.com".to_string()],
+            start_time: Local.with_ymd_and_hms(2024, 12, 5, 9, 00, 00).unwrap(),
+            ..Default::default()
+        };
+
+        assert_eq!(
+            handler.handle(&event),
+            Some("- **0900**: [[jane-doe#2024-12-05|John/Jane]]".to_string())
+        );
     }
 
     #[test]
